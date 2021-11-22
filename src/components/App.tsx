@@ -2,7 +2,7 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import styled, { createGlobalStyle } from 'styled-components';
 
-import { EventContextProvider } from '../eventsContext'
+import { EventContextProvider } from '../eventsContext';
 import EventsForm from './EventsForm';
 import EventsTable from './EventsTable';
 
