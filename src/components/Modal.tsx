@@ -27,7 +27,7 @@ const ModalWrapper = styled.div<{ open?: boolean }>`
 	}
 `;
 const ModalBody = styled.div<{ open?: boolean }>`
-	max-width: 50vw;
+	width: 50vw;
 	min-height: 40vh;
 	border-radius: 10px;
 	background-color: white;
@@ -35,7 +35,7 @@ const ModalBody = styled.div<{ open?: boolean }>`
 	z-index: 1;
 
 	@media (max-width: 576px) {
-		max-width: 90vw;
+		width: 90vw;
 	}
 `;
 

@@ -13,7 +13,7 @@ export interface EventType extends BaseEventType {
 
 interface ActionReturnType<Type> {
 	type: string;
-	payload?: Type;
+	payload: Type;
 }
 
 type EventContextType = {
@@ -21,7 +21,7 @@ type EventContextType = {
 	dispatch: any;
 };
 
-type ActionType<Type> = (payload?: Type) => ActionReturnType<Type>;
+type ActionType<Type> = (payload: Type) => ActionReturnType<Type>;
 
 const initialState: Array<EventType> = [
 	{
@@ -58,12 +58,10 @@ const deleteEvent: ActionType<string> = (payload) => ({
 
 const dateComparator = (a: EventType, b: EventType) => b.date.valueOf() - a.date.valueOf();
 
-const eventsReducer = (state: Array<EventType>, { type, payload }: any) =>
-// { type, payload }: ActionReturnType<BaseEventType | string>
-{
+const eventsReducer = (state: Array<EventType>, { type, payload }: ActionReturnType<BaseEventType | string>) => {
 	switch (type) {
 		case ActionTypes.ADD:
-			const events: Array<EventType> = [...state, { ...payload, id: createHashId() }];
+			const events: Array<EventType> = [...state, { ...payload as BaseEventType, id: createHashId() }];
 			events.sort(dateComparator);
 			return events;
 		case ActionTypes.DELETE:
