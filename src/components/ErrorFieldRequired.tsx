@@ -1,5 +1,5 @@
-import { FC } from "react";
-import styled from "styled-components";
+import { FC } from 'react';
+import styled from 'styled-components';
 
 const Error = styled.span`
 	display: block;
@@ -8,9 +8,10 @@ const Error = styled.span`
 `;
 
 type ErrorFieldRequiredType = {
-    error: boolean
-}
+	error: boolean;
+};
 
-const ErrorFieldRequired: FC<ErrorFieldRequiredType> = ({ error }) => error ? <Error>This is required.</Error> : null
+const ErrorFieldRequired: FC<ErrorFieldRequiredType> = ({ error }) =>
+	error ? <Error>This is required.</Error> : null;
 
 export default ErrorFieldRequired;

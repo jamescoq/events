@@ -7,20 +7,21 @@ import { addEvent, useEventsContext, BaseEventType } from '../eventsContext';
 import { DATE_TIME_FORMAT, LOCALE } from '../constants';
 import ErrorFieldRequired from './ErrorFieldRequired';
 
-
-const FormGroup = styled.div<{ row?: boolean, align?: string, margin?: string }>`
+const FormGroup = styled.div<{ row?: boolean; align?: string; margin?: string }>`
 	margin: ${({ margin = '1vh' }) => margin};
 	flex: 1;
-	
-	${({ row, align }) => row && css`
-		display: flex;
-		flex-direction: row;
-		justify-content: ${align};
-		
-		@media (max-width: 576px) {
-			flex-direction: column;
-		}
-  	`}
+
+	${({ row, align }) =>
+		row &&
+		css`
+			display: flex;
+			flex-direction: row;
+			justify-content: ${align};
+
+			@media (max-width: 576px) {
+				flex-direction: column;
+			}
+		`}
 `;
 
 const Label = styled.label`
