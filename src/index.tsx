@@ -1,7 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { registerLocale } from 'react-datepicker';
+import cs from 'date-fns/locale/cs';
+
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
+import { LOCALE } from './constants';
+
+registerLocale(LOCALE, cs);
 
 ReactDOM.render(
 	<React.StrictMode>

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react';
-import hash from 'object-hash';
-
+import { createHashId } from './utils'
 export interface BaseEventType {
 	name: string;
 	description: string;
@@ -8,7 +7,7 @@ export interface BaseEventType {
 	date: Date;
 	participants: number;
 }
-interface EventType extends BaseEventType {
+export interface EventType extends BaseEventType {
 	id: string;
 }
 
@@ -57,13 +56,16 @@ const deleteEvent: ActionType<string> = (payload) => ({
 	payload,
 });
 
+const dateComparator = (a: EventType, b: EventType) => b.date.valueOf() - a.date.valueOf();
+
 const eventsReducer = (state: Array<EventType>, { type, payload }: any) =>
 // { type, payload }: ActionReturnType<BaseEventType | string>
 {
 	switch (type) {
 		case ActionTypes.ADD:
-			const id = hash(payload);
-			return [...state, { ...payload, id }];
+			const events: Array<EventType> = [...state, { ...payload, id: createHashId() }];
+			events.sort(dateComparator);
+			return events;
 		case ActionTypes.DELETE:
 			return state.filter(({ id }) => id !== payload);
 		default:

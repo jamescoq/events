@@ -1,27 +1,36 @@
-import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import DatePicker, { registerLocale } from 'react-datepicker';
-import cs from 'date-fns/locale/cs';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Wrapper from './Wrapper';
 import { addEvent, useEventsContext, BaseEventType } from '../eventsContext';
+import { DATE_TIME_FORMAT, LOCALE } from '../constants';
+import ErrorFieldRequired from './ErrorFieldRequired';
 
-registerLocale('cs', cs);
+
+const FormGroup = styled.div<{ row?: boolean, align?: string, margin?: string }>`
+	margin: ${({ margin = '1vh' }) => margin};
+	flex: 1;
+	
+	${({ row, align }) => row && css`
+		display: flex;
+		flex-direction: row;
+		justify-content: ${align};
+		
+		@media (max-width: 576px) {
+			flex-direction: column;
+		}
+  	`}
+`;
 
 const Label = styled.label`
 	display: block;
 	font-weight: 600;
 	margin-bottom: 1vh;
 `;
-const FormGroup = styled.div`
-	display: inline-block;
-	margin: 0.5vw;
-`;
 
 const Input = styled.input`
     align-items: center;
-    text-align: end;
     background-color: hsl(0, 0%, 100%);
     border-color: hsl(0, 0%, 80%)};
     border-radius: 4px;
@@ -29,19 +38,23 @@ const Input = styled.input`
     border-width: 1px;
     min-height: 38px;
 	min-width: 130px;
-    width: 14vw;
-    padding: 0px 0px;
-    padding-right: 30px;
+	width: 100%;
+    padding: 0px 0px 0px 5px;
     font-size: 16px;
-
-	@media (max-width: 768px) {
-		width: 44vw;
-	}
 `;
-const Error = styled.span`
-	display: block;
-	color: #ff0606;
-	font-size: 12px;
+
+const TextArea = styled.textarea`
+    align-items: center;
+    background-color: hsl(0, 0%, 100%);
+    border-color: hsl(0, 0%, 80%)};
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    min-height: 38px;
+	min-width: 130px;
+	width: 100%;
+    padding: 0px 0px 0px 5px;
+    font-size: 16px;
 `;
 
 const Submit = styled.input.attrs({
@@ -50,14 +63,17 @@ const Submit = styled.input.attrs({
 	background: #00387b;
 	color: #fff;
 	cursor: pointer;
+	text-align: center;
 	text-transform: uppercase;
 	width: 130px;
-	border-radius: 5px;
 	height: 38px;
+	border-radius: 5px;
 	border-color: transparent;
-	outline: none;
-	transition: 0.15s;
-	text-align: center;
+	padding: 0px;
+	@media (max-width: 576px) {
+		width: 100%;
+	}
+
 	&:hover {
 		color: #fff;
 		background-color: #002755;
@@ -69,63 +85,65 @@ const EventsForm = () => {
 	const {
 		control,
 		register,
+		reset,
 		handleSubmit,
 		formState: { errors },
 	} = useForm();
 	const { dispatch } = useEventsContext();
 
 	const onSubmit: SubmitHandler<BaseEventType> = (data) => {
-		console.log(data);
 		dispatch(addEvent(data));
+		reset();
 	};
 
 	return (
 		<Wrapper width="60vw">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<FormGroup>
-					<Label>Název</Label>
+					<Label>Název*</Label>
 					<Input {...register('name', { required: true })} />
-					{errors.name && <Error>This is required.</Error>}
+					<ErrorFieldRequired error={errors.name} />
+				</FormGroup>
+				<FormGroup row align="space-between" margin="0">
+					<FormGroup>
+						<Label>Datum*</Label>
+						<Controller
+							control={control}
+							name="date"
+							rules={{ required: true }}
+							render={({ field }) => (
+								<DatePicker
+									placeholderText="Vyberte datum"
+									onChange={(date) => field.onChange(date)}
+									selected={field.value}
+									dateFormat={DATE_TIME_FORMAT}
+									showTimeSelect
+									timeCaption="Čas"
+									timeIntervals={15}
+									locale={LOCALE}
+									startDate={new Date()}
+									minDate={new Date()}
+									customInput={<Input />}
+								/>
+							)}
+						/>
+						<ErrorFieldRequired error={errors.date} />
+					</FormGroup>
+					<FormGroup>
+						<Label>Limit účastníků</Label>
+						<Input type="number" min="0" {...register('participants')} />
+					</FormGroup>
 				</FormGroup>
 				<FormGroup>
-					<Label>Datum</Label>
-					<Controller
-						control={control}
-						name="date"
-						render={({ field }) => (
-							<DatePicker
-								placeholderText="Select date"
-								onChange={(date) => field.onChange(date)}
-								selected={field.value}
-								dateFormat="d.M.yyyy h:mm"
-								showTimeSelect
-								timeCaption="Čas"
-								timeIntervals={15}
-								locale="cs"
-								startDate={new Date()}
-								minDate={new Date()}
-								customInput={<Input />}
-							/>
-						)}
-					/>
-					{errors.date && <Error>This is required.</Error>}
-				</FormGroup>
-				<FormGroup>
-					<Label>Místo</Label>
+					<Label>Místo*</Label>
 					<Input {...register('place', { required: true })} />
-					{errors.place && <Error>This is required.</Error>}
+					<ErrorFieldRequired error={errors.place} />
 				</FormGroup>
 				<FormGroup>
 					<Label>Popis</Label>
-					<Input {...register('description', { required: true })} />
-					{errors.description && <Error>This is required.</Error>}
+					<TextArea {...register('description')} rows={3} />
 				</FormGroup>
-				<FormGroup>
-					<Label>Limit účastníků</Label>
-					<Input type="number" min="0" {...register('participants', { required: true })} />
-					{errors.participants && <Error>This is required.</Error>}
-				</FormGroup>
-				<FormGroup>
+				<FormGroup row align="end">
 					<Submit />
 				</FormGroup>
 			</form>
